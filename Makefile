@@ -8,7 +8,7 @@
 # Blue Gene/P
 CC      = mpixlc
 CXX     = mpixlcxx
-COPTS   = -c -O3 -DCMK_BLUEGENEP
+COPTS   = -c -O3 -DCMK_BLUEGENEP=1
 LOPTS   =
 
 # ======================================================================================
