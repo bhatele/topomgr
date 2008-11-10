@@ -12,20 +12,20 @@ int main(int argc, char *argv[]) {
   MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
   MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
+  if(myrank == 0) {
 #if CMK_BLUEGENEL
-  BGLPersonality bgl_p;
-  int i = rts_get_personality(&bgl_p, sizeof(BGLPersonality));
+    BGLPersonality bgl_p;
+    int i = rts_get_personality(&bgl_p, sizeof(BGLPersonality));
 #elif CMK_BLUEGENEP
-  DCMF_Hardware_t bgp_hwt;
-  DCMF_Hardware(&bgp_hwt);
+    DCMF_Hardware_t bgp_hwt;
+    DCMF_Hardware(&bgp_hwt);
 #elif XT3_TOPOLOGY
-  XT3TorusManager xt3tm;
+    XT3TorusManager xt3tm;
 #elif XT4_TOPOLOGY
-  XT4TorusManager xt4tm;
+    XT4TorusManager xt4tm;
 #endif
 
-  int x, y, z, t;
-  if(myrank == 0) {
+    int x, y, z, t;
     printf("Testing TopoManager .... \n");
     printf("MPI Job Size: %d cores\n\n", numprocs);
     
