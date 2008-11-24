@@ -13,6 +13,13 @@
  *  will write for different machines (cray, bg/l ... for tori, meshes ...)
  *  Current plan is to have functionality for Blue Gene/L, Cray XT3,
  *  BigSim and non-topo machines.
+ *
+ * Any published work which utilizes this API should include the following
+ * reference:
+ *
+ * "A. Bhatele and L. V. Kale, Benefits of Topology Aware Mapping for Mesh 
+ * Interconnects, Parallel Processing Letters (LSPP special issue), 2008."
+ *
  */
 
 #ifndef _TOPO_MANAGER_H_

@@ -1,0 +1,27 @@
+========================================================================
+			THE TOPOMANAGER API
+========================================================================
+
+The TopoManager API provides runtime information about the allocated job
+partition on IBM Blue Gene and Cray XT machines. For documentation, read
+"TopoManager.h". This is the only file which needs to interface with the
+application.
+
+------------------------------------------------------------------------
+COMPILE:
+------------------------------------------------------------------------
+To compile, edit the Makefile so that the variables are set for the
+right architecture.
+
+Type make which will create libtmgr.a. Add -ltmgr at the link line.
+
+------------------------------------------------------------------------
+CITATION:
+------------------------------------------------------------------------
+Any published work which utilizes this API should include the following
+reference:
+
+"A. Bhatele and L. V. Kale, Benefits of Topology Aware Mapping for Mesh 
+Interconnects, Parallel Processing Letters (LSPP special issue), 2008."
+
+========================================================================
