@@ -15,7 +15,7 @@ LOPTS   =
 # Cray XT3 (BigBen)
 #CC      = cc
 #CXX     = CC
-#COPTS   = -c -O3 -DXT3_TOPOLOGY=1 -DCRAYNBORTABLE=`pwd`/CrayNeighborTable
+#COPTS   = -c -O3 -DXT3_TOPOLOGY=1 #-DCRAYNBORTABLE=`pwd`/CrayNeighborTable
 #LOPTS   = 
 
 # ======================================================================================
