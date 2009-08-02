@@ -29,10 +29,24 @@ void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z) {
   bgltm.rankToCoordinates(pe, x, y, z);
 #elif CMK_BLUEGENEP
   bgptm.rankToCoordinates(pe, x, y, z);
-#elif XT3_TOPOLOGY || XT4_TOPOLOGY
+#elif XT3_TOPOLOGY || XT4_TOPOLOGY || XT5_TOPOLOGY
   printf("This function should not be called on Cray XT machines\n");
   abort();
 #else
+  if(dimY > 1){
+    // Assumed TXYZ
+    x = pe % dimX;
+    y = (pe % (dimX * dimY)) / dimX;
+    z = pe / (dimX * dimY);
+  }
+  else {
+    x = pe; 
+    y = 0; 
+    z = 0;
+  }
+#endif
+
+#if CMK_BLUEGENE_CHARM
   if(dimY > 1){
     // Assumed TXYZ
     x = pe % dimX;
@@ -54,9 +68,23 @@ void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z, int &t) {
   bgptm.rankToCoordinates(pe, x, y, z, t);
 #elif XT3_TOPOLOGY
   xt3tm.rankToCoordinates(pe, x, y, z, t);
-#elif XT4_TOPOLOGY
+#elif XT4_TOPOLOGY || XT5_TOPOLOGY
   xt4tm.rankToCoordinates(pe, x, y, z, t);
 #else
+  if(dimNY > 1) {
+    t = pe % dimNT;
+    x = (pe % (dimNT*dimNX)) / dimNT;
+    y = (pe % (dimNT*dimNX*dimNY)) / (dimNT*dimNX);
+    z = pe / (dimNT*dimNX*dimNY);
+  } else {
+    t = pe % dimNT;
+    x = (pe % (dimNT*dimNX)) / dimNT;
+    y = 0;
+    z = 0;
+  }
+#endif
+
+#if CMK_BLUEGENE_CHARM
   if(dimNY > 1) {
     t = pe % dimNT;
     x = (pe % (dimNT*dimNX)) / dimNT;
@@ -72,11 +100,18 @@ void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z, int &t) {
 }
 
 int TopoManager::coordinatesToRank(int x, int y, int z) {
+#if CMK_BLUEGENE_CHARM
+  if(dimY > 1)
+    return x + y*dimX + z*dimX*dimY;
+  else
+    return x;
+#endif
+
 #if CMK_BLUEGENEL
   return bgltm.coordinatesToRank(x, y, z);
 #elif CMK_BLUEGENEP
   return bgptm.coordinatesToRank(x, y, z);
-#elif XT3_TOPOLOGY || XT4_TOPOLOGY
+#elif XT3_TOPOLOGY || XT4_TOPOLOGY || XT5_TOPOLOGY
   printf("This function should not be called on Cray XT machines\n");
   abort();
 #else
@@ -88,13 +123,20 @@ int TopoManager::coordinatesToRank(int x, int y, int z) {
 }
 
 int TopoManager::coordinatesToRank(int x, int y, int z, int t) {
+#if CMK_BLUEGENE_CHARM
+  if(dimNY > 1)
+    return t + (x + (y + z*dimNY) * dimNX) * dimNT;
+  else
+    return t + x * dimNT;
+#endif
+
 #if CMK_BLUEGENEL
   return bgltm.coordinatesToRank(x, y, z, t);
 #elif CMK_BLUEGENEP
   return bgptm.coordinatesToRank(x, y, z, t);
 #elif XT3_TOPOLOGY
   return xt3tm.coordinatesToRank(x, y, z, t);
-#elif XT4_TOPOLOGY
+#elif XT4_TOPOLOGY || XT5_TOPOLOGY
   return xt4tm.coordinatesToRank(x, y, z, t);
 #else
   if(dimNY > 1)

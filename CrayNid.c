@@ -14,7 +14,7 @@
  *  can be called from C++ files
  */
 
-#if XT3_TOPOLOGY || XT4_TOPOLOGY
+#if CMK_CRAYXT
 
 #include <rca_lib.h>
 
@@ -23,12 +23,45 @@
 #define MAXNID 2784
 #define TDIM 2
 
-#elif XT4_TOPOLOGY
+#else	/* if it is a XT4/5 */
 #include <pmi.h>
-#define MAXNID 9000
-#define TDIM 4
-
 #endif
+
+/** \function getXTNodeID
+ *  returns nodeID corresponding to the CkMyPe() passed to it
+ */
+int getXTNodeID(int mype, int numpes) {
+  int nid = -1;
+
+#if XT3_TOPOLOGY
+  cnos_nidpid_map_t *nidpid; 
+  int ierr;
+  
+  nidpid = (cnos_nidpid_map_t *)malloc(sizeof(cnos_nidpid_map_t) * numpes);
+
+  ierr = cnos_get_nidpid_map(&nidpid);
+  nid = nidpid[mype].nid;
+  /* free(nidpid); */
+
+#else	/* if it is a XT4/5 */
+  PMI_Portals_get_nid(mype, &nid);
+#endif
+
+  return nid;
+}
+
+#endif /* CMK_CRAYXT */
+
+#if XT3_TOPOLOGY || XT4_TOPOLOGY || XT5_TOPOLOGY
+
+  #if XT4_TOPOLOGY
+  #define MAXNID 14000
+  #define TDIM 4
+
+  #elif XT5_TOPOLOGY
+  #define MAXNID 17000
+  #define TDIM 8
+  #endif
 
 int *pid2nid;                   /* rank to node ID */
 int nid2pid[MAXNID][TDIM];      /* node ID to rank */
@@ -42,29 +75,6 @@ int getMeshCoord(int nid, int *x, int *y, int *z) {
   *x = xyz.mesh_x;
   *y = xyz.mesh_y;
   *z = xyz.mesh_z;
-}
-
-/** \function getXTNodeID
- *  returns nodeID corresponding to the CkMyPe() passed to it
- */
-int getXTNodeID(int mype, int numpes) {
-  int nid;
-
-#if XT3_TOPOLOGY
-  cnos_nidpid_map_t *nidpid; 
-  int ierr;
-  
-  nidpid = (cnos_nidpid_map_t *)malloc(sizeof(cnos_nidpid_map_t) * numpes);
-
-  ierr = cnos_get_nidpid_map(&nidpid);
-  nid = nidpid[mype].nid;
-  /* free(nidpid); */
-
-#elif XT4_TOPOLOGY
-  PMI_Portals_get_nid(mype, &nid);
-#endif
-
-  return nid;
 }
 
 /** \function pidtonid
@@ -110,7 +120,7 @@ void pidtonid(int numpes) {
     }
   }
   
-#elif XT4_TOPOLOGY
+#elif XT4_TOPOLOGY || XT5_TOPOLOGY
   int i, j, nid;
   pid2nid = (int *)malloc(sizeof(int) * numpes);
 
@@ -127,10 +137,23 @@ void pidtonid(int numpes) {
       nid2pid[nid][1] = i;
     else if (nid2pid[nid][2] == -1)
       nid2pid[nid][2] = i;
-    else
+    else 
+  #if XT4_TOPOLOGY
       nid2pid[nid][3] = i;
+  #elif XT5_TOPOLOGY
+    if (nid2pid[nid][3] == -1)
+      nid2pid[nid][3] = i;
+    else if (nid2pid[nid][4] == -1)
+      nid2pid[nid][4] = i;
+    else if (nid2pid[nid][5] == -1)
+      nid2pid[nid][5] = i;
+    else if (nid2pid[nid][6] == -1)
+      nid2pid[nid][6] = i;
+    else
+      nid2pid[nid][7] = i;
+  #endif
   }
 #endif
 }
 
-#endif /* XT3 or XT4 TOPOLOGY */
+#endif /* XT3_TOPOLOGY || XT4_TOPOLOGY || XT5_TOPOLOGY */

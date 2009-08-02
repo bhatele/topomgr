@@ -36,8 +36,12 @@
 #include "BGPTorus.h"
 #elif XT3_TOPOLOGY
 #include "XT3Torus.h"
-#elif XT4_TOPOLOGY
+#elif XT4_TOPOLOGY || XT5_TOPOLOGY
 #include "XT4Torus.h"
+#endif
+
+#if CMK_BLUEGENE_CHARM
+#include "blue.h"
 #endif
 
 class TopoManager {
@@ -58,7 +62,7 @@ class TopoManager {
     BGPTorusManager bgptm;
 #elif XT3_TOPOLOGY
     XT3TorusManager xt3tm;
-#elif XT4_TOPOLOGY
+#elif XT4_TOPOLOGY || XT5_TOPOLOGY
     XT4TorusManager xt4tm;
 #endif
 
@@ -119,7 +123,7 @@ class TopoManager {
       torusZ = torus[2];
       torusT = torus[3];
 
-#elif XT4_TOPOLOGY
+#elif XT4_TOPOLOGY || XT5_TOPOLOGY
       dimX = xt4tm.getDimX();
       dimY = xt4tm.getDimY();
       dimZ = xt4tm.getDimZ();
@@ -147,6 +151,20 @@ class TopoManager {
       dimNZ = 1;
 
       dimNT = procsPerNode = 1;
+      torusX = true;
+      torusY = true;
+      torusZ = true;
+      torusT = false;
+#endif
+
+#if CMK_BLUEGENE_CHARM
+      BgGetSize(&dimNX, &dimNY, &dimNZ);
+
+      dimNT = procsPerNode = BgGetNumWorkThread();
+      dimX = dimNX * procsPerNode;
+      dimY = dimNY;
+      dimZ = dimNZ;
+
       torusX = true;
       torusY = true;
       torusZ = true;

@@ -15,14 +15,14 @@ LOPTS   =
 # Cray XT3 (BigBen)
 #CC      = cc
 #CXX     = CC
-#COPTS   = -c -O3 -DXT3_TOPOLOGY=1 #-DCRAYNBORTABLE=`pwd`/CrayNeighborTable
+#COPTS   = -c -O3 -DCMK_CRAYXT -DXT3_TOPOLOGY=1 #-DCRAYNBORTABLE=`pwd`/CrayNeighborTable
 #LOPTS   = 
 
 # ======================================================================================
-# Cray XT4 (Jaguar)
+# Cray XT4/5 (Jaguar, Kraken)
 #CC      = cc
 #CXX     = CC
-#COPTS   = -c -O3 -DXT4_TOPOLOGY=1
+#COPTS   = -c -O3 -DCMK_CRAYXT -DXT4_TOPOLOGY=1 #-DXT5_TOPOLOGY
 #LOPTS   = -lrca
 
 all: libtmgr.a test
