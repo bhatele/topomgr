@@ -2,6 +2,12 @@
 			THE TOPOMANAGER API
 ========================================================================
 
+  Author: Abhinav S Bhatele
+  Date Created: May 11th, 2008
+  E-mail: bhatele AT illinois.edu
+
+------------------------------------------------------------------------
+
 The TopoManager API provides runtime information about the allocated job
 partition on IBM Blue Gene and Cray XT machines. For documentation, read
 "TopoManager.h". This is the only file which needs to interface with the
@@ -22,6 +28,7 @@ Any published work which utilizes this API should include the following
 reference:
 
 "A. Bhatele and L. V. Kale, Benefits of Topology Aware Mapping for Mesh 
-Interconnects, Parallel Processing Letters (LSPP special issue), 2008."
+Interconnects, Parallel Processing Letters (Special Issue on Large Scale
+Parallel Processing), Vol:18, Issue:4, Pages 549-566, 2008."
 
 ========================================================================
