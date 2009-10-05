@@ -1,10 +1,3 @@
- /*****************************************************************************
- * $Source$
- * $Author$
- * $Date$
- * $Revision$
- *****************************************************************************/
-
  /** \file TopoManager.h
  *  Author: Abhinav S Bhatele
  *  Date Created: March 19th, 2007
@@ -199,7 +192,7 @@ class TopoManager {
     
     inline int absX(int x) {
       int px = abs(x);
-      int sx = dimX - px;
+      int sx = dimNX - px;
       if (sx<0) { // CmiAssert(sx>=0);
         printf("ERROR!!!\n");
         abort();
@@ -212,7 +205,7 @@ class TopoManager {
     
     inline int absY(int y) {
       int py = abs(y);
-      int sy = dimY - py;
+      int sy = dimNY - py;
       if (sy<0) { // CmiAssert(sy>=0);
         printf("ERROR!!!\n");
         abort();
@@ -225,7 +218,7 @@ class TopoManager {
 
     inline int absZ(int z) {
       int pz = abs(z);
-      int sz = dimZ - pz;
+      int sz = dimNZ - pz;
       if (sz<0) { // CmiAssert(sz>=0);
         printf("ERROR!!!\n");
         abort();
