@@ -1,10 +1,3 @@
- /*****************************************************************************
- * $Source$
- * $Author$
- * $Date$
- * $Revision$
- *****************************************************************************/
- 
  /** \file XT4Torus.h
  *  Author: Abhinav S Bhatele
  *  Date created: August 19th, 2008
@@ -23,22 +16,24 @@
 // Please do NOT expect things to work if you use this code on a new
 // Cray machine.
 
+#if XT4_TOPOLOGY
+#define MAXNID 14000
 #define XDIM 21
 #define YDIM 16
 #define ZDIM 24
-
-#if XT4_TOPOLOGY
-#define MAXNID 14000
 #define TDIM 4
 
 #elif XT5_TOPOLOGY
 #define MAXNID 17000
-#define TDIM 8
+#define XDIM 25
+#define YDIM 32
+#define ZDIM 24
+#define TDIM 16
 
 #endif
 
 extern "C" int *pid2nid;
-extern "C" int nid2pid[MAXNID][4];
+extern "C" int nid2pid[MAXNID][TDIM];
 extern "C" int pidtonid(int numpes);
 extern "C" int getMeshCoord(int nid, int *x, int *y, int *z);
 
@@ -69,6 +64,7 @@ class XT4TorusManager {
   public:
     XT4TorusManager() {
       int nid = 0, oldnid = -1, lx, ly, lz;
+      int i, j, k, l;
       int minX=XDIM, minY=YDIM, minZ=ZDIM, minT=0, maxX=0, maxY=0, maxZ=0;
 
       int numprocs;
@@ -78,15 +74,15 @@ class XT4TorusManager {
       // fill the nid2pid and pid2nid data structures
       pidtonid(numprocs);
 
-      for(int i=0; i<XDIM; i++)
-	for(int j=0; j<YDIM; j++)
-	  for(int k=0; k<ZDIM; k++)
-	    for(int l=0; l<TDIM; l++)
+      for(i=0; i<XDIM; i++)
+	for(j=0; j<YDIM; j++)
+	  for(k=0; k<ZDIM; k++)
+	    for(l=0; l<TDIM; l++)
 	      coords2pid[i][j][k][l] = -1;
 
       dimNT = 1;			// assume SN mode first
       // now fill the coords2pid and pid2coords data structures
-      for(int i=0; i<numprocs; i++)
+      for(i=0; i<numprocs; i++)
       {
         nid = pid2nid[i];
 	if (nid != oldnid)
@@ -96,24 +92,13 @@ class XT4TorusManager {
         pid2coords[i].x = lx;      
         pid2coords[i].y = ly;
         pid2coords[i].z = lz;
- 
-	if (coords2pid[lx][ly][lz][0] == -1) {
-	  coords2pid[lx][ly][lz][0] = i;
-	  pid2coords[i].t = 0;
-	} else if (coords2pid[lx][ly][lz][1] == -1) {
-	  dimNT = 2;			// 2 cores per node
-          coords2pid[lx][ly][lz][1] = i;
-	  pid2coords[i].t = 1;
-	} else if (coords2pid[lx][ly][lz][2] == -1) {
-	  dimNT = 3;			// 3 cores per node
-          coords2pid[lx][ly][lz][2] = i;
-	  pid2coords[i].t = 2;
-	} else {
-	  dimNT = 4;			// 4 cores per node
-          coords2pid[lx][ly][lz][3] = i;
-	  pid2coords[i].t = 3;
-	}
-          
+
+	l = 0;
+	while(coords2pid[lx][ly][lz][l] != -1)
+	  l++;
+	coords2pid[lx][ly][lz][l] = i;
+	pid2coords[i].t = l;
+
         if (lx<minX) minX = lx; if (lx>maxX) maxX = lx;
         if (ly<minY) minY = ly; if (ly>maxY) maxY = ly;
         if (lz<minZ) minZ = lz; if (lz>maxZ) maxZ = lz;
@@ -134,6 +119,12 @@ class XT4TorusManager {
       dimX = dimNX * dimNT;
       dimY = dimNY;
       dimZ = dimNZ;
+
+      for(l=0; l<TDIM; l++) {
+	if(coords2pid[minX][minY][minZ][l] == -1)
+	  break;
+      }
+      dimNT = l;
 
       // we get a torus only if the size of the dimension is the biggest
       torus[0] = 0;		// Jaguar is a mesh in X dimension always

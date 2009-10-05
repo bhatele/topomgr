@@ -6,10 +6,10 @@
 
 # ======================================================================================
 # Blue Gene/P
-CC      = mpixlc
-CXX     = mpixlcxx
-COPTS   = -c -O3 -DCMK_BLUEGENEP=1
-LOPTS   =
+#CC      = mpixlc
+#CXX     = mpixlcxx
+#COPTS   = -c -O3 -DCMK_BLUEGENEP=1
+#LOPTS   =
 
 # ======================================================================================
 # Cray XT3 (BigBen)
@@ -20,10 +20,10 @@ LOPTS   =
 
 # ======================================================================================
 # Cray XT4/5 (Jaguar, Kraken)
-#CC      = cc
-#CXX     = CC
-#COPTS   = -c -O3 -DCMK_CRAYXT -DXT4_TOPOLOGY=1 #-DXT5_TOPOLOGY
-#LOPTS   = -lrca
+CC      = cc
+CXX     = CC
+COPTS   = -c -O3 -DCMK_CRAYXT -DXT5_TOPOLOGY=1
+LOPTS   = -lrca
 
 all: libtmgr.a test
 

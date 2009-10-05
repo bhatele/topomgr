@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     DCMF_Hardware(&bgp_hwt);
 #elif XT3_TOPOLOGY
     XT3TorusManager xt3tm;
-#elif XT4_TOPOLOGY
+#elif XT4_TOPOLOGY || XT5_TOPOLOGY
     XT4TorusManager xt4tm;
 #endif
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
       int tmp_t, tmp_x, tmp_y, tmp_z;
       xt3tm.realRankToCoordinates(i, tmp_x, tmp_y, tmp_z, tmp_t);
       printf("Real Processor %d ---> x %d y %d z %d t %d\n", i, tmp_x, tmp_y, tmp_z, tmp_t);
-#elif XT4_TOPOLOGY
+#elif XT4_TOPOLOGY || XT5_TOPOLOGY
       int tmp_t, tmp_x, tmp_y, tmp_z;
       xt4tm.realRankToCoordinates(i, tmp_x, tmp_y, tmp_z, tmp_t);
       printf("Real Processor %d ---> x %d y %d z %d t %d\n", i, tmp_x, tmp_y, tmp_z, tmp_t);
