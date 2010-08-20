@@ -21,27 +21,6 @@ right architecture.
 
 Type make which will create libtmgr.a. Add -ltmgr at the link line.
 
-
----------------------------
-EXPERIMENTS:
----------------------------
-1. full_overlap
-
-2. partial_overlap
-
-3. flow
-Reads the map from the mapfile. The number of the mapfile is passed as an argument to build_process_map.
-
-Format for the map file
-
-Sender          Receiver
-x1 y1 z1 ---->  x2 y2 z2
-
-Compile them using the corresponding option in makefile.
-Right now, each of them has been instrumented with calls for obtaining hpm counters.
-
-The output is bgp_print files from where we extract the bandwidth data.
-
 ------------------------------------------------------------------------
 CITATION:
 ------------------------------------------------------------------------
