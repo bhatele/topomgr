@@ -1,11 +1,11 @@
- /** \file XT4Torus.h
+/** \file XTTorus.h
  *  Author: Abhinav S Bhatele
  *  Date created: August 19th, 2008
  *  
  */
 
-#ifndef _XT4_TORUS_H_
-#define _XT4_TORUS_H_
+#ifndef _XT_TORUS_H_
+#define _XT_TORUS_H_
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,7 +28,7 @@
 #define XDIM 25
 #define YDIM 32
 #define ZDIM 24
-#define TDIM 16
+#define TDIM 12
 
 #endif
 
@@ -44,7 +44,7 @@ struct loc {
   int t;
 };
 
-class XT4TorusManager {
+class XTTorusManager {
   private:
     int dimX;	// dimension of the allocation in X (processors)
     int dimY;	// dimension of the allocation in Y (processors)
@@ -62,7 +62,7 @@ class XT4TorusManager {
     struct loc origin;
 
   public:
-    XT4TorusManager() {
+    XTTorusManager() {
       int nid = 0, oldnid = -1, lx, ly, lz;
       int i, j, k, l;
       int minX=XDIM, minY=YDIM, minZ=ZDIM, minT=0, maxX=0, maxY=0, maxZ=0;
@@ -133,7 +133,7 @@ class XT4TorusManager {
       torus[3] = 0;
     }
 
-    ~XT4TorusManager() { }
+    ~XTTorusManager() { }
 
     inline int getDimX() { return dimX; }
     inline int getDimY() { return dimY; }
@@ -168,4 +168,4 @@ class XT4TorusManager {
 };
 
 #endif // XT4_TOPOLOGY || XT5_TOPOLOGY
-#endif //_XT4_TORUS_H_
+#endif //_XT_TORUS_H_

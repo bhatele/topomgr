@@ -1,4 +1,4 @@
- /** \file XT3Torus.h
+/** \file XT3Torus.h
  *  Author: Abhinav S Bhatele
  *  Date created: March 19th, 2007  
  *  

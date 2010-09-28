@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 #elif XT3_TOPOLOGY
     XT3TorusManager xt3tm;
 #elif XT4_TOPOLOGY || XT5_TOPOLOGY
-    XT4TorusManager xt4tm;
+    XTTorusManager xt4tm;
 #endif
 
     int x, y, z, t;

@@ -1,0 +1,79 @@
+10,11d9
+< #include "converse.h"
+< 
+46,48c44,47
+<       int numPes = CmiNumPes();      
+<       thdsPerProc = CmiMyNodeSize();
+<       
+---
+>       int numPes;
+>       MPI_Comm_size(MPI_COMM_WORLD, &numPes);
+>       thdsPerProc = 1;
+> 
+10,11d9
+< #include "converse.h"
+< 
+26c26,27
+<   CmiAbort("This function should not be called on Cray XT machines\n");
+---
+>   printf("This function should not be called on Cray XT machines\n");
+>   abort();
+107c108,109
+<   CmiAbort("This function should not be called on Cray XT machines\n");
+---
+>   printf("This function should not be called on Cray XT machines\n");
+>   abort();
+224d225
+< 
+22c22,24
+< #include "charm.h"
+---
+> #include <mpi.h>
+> #include <stdio.h>
+> #include <stdlib.h>
+194c196,199
+<       CmiAssert(sx>=0);
+---
+>       if (sx<0) { // CmiAssert(sx>=0);
+>         printf("ERROR!!!\n");
+>         abort();
+>       }
+204c209,212
+<       CmiAssert(sy>=0);
+---
+>       if (sy<0) { // CmiAssert(sy>=0);
+>         printf("ERROR!!!\n");
+>         abort();
+>       }
+214c222,225
+<       CmiAssert(sz>=0);
+---
+>       if (sz<0) { // CmiAssert(sz>=0);
+>         printf("ERROR!!!\n");
+>         abort();
+>       }
+19,20d18
+< #include "converse.h"
+< 
+67c65,66
+<       int numprocs = CmiNumPes();
+---
+>       int numprocs;
+>       MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+10d9
+< #include "converse.h"
+70c69,72
+<       pid2coords = (struct loc*)malloc(sizeof(struct loc) * CmiNumPes());
+---
+> 
+>       int numprocs;
+>       MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+>       pid2coords = (struct loc*)malloc(sizeof(struct loc) * numprocs);
+73c75
+<       pidtonid(CmiNumPes());
+---
+>       pidtonid(numprocs);
+83c85
+<       for(int i=0; i<CmiNumPes(); i++)
+---
+>       for(i=0; i<numprocs; i++)

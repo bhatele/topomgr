@@ -1,4 +1,4 @@
- /** \file TopoManager.h
+/** \file TopoManager.h
  *  Author: Abhinav S Bhatele
  *  Date Created: March 19th, 2007
  *
@@ -30,7 +30,7 @@
 #elif XT3_TOPOLOGY
 #include "XT3Torus.h"
 #elif XT4_TOPOLOGY || XT5_TOPOLOGY
-#include "XT4Torus.h"
+#include "XTTorus.h"
 #endif
 
 #if CMK_BLUEGENE_CHARM
@@ -56,7 +56,7 @@ class TopoManager {
 #elif XT3_TOPOLOGY
     XT3TorusManager xt3tm;
 #elif XT4_TOPOLOGY || XT5_TOPOLOGY
-    XT4TorusManager xt4tm;
+    XTTorusManager xt4tm;
 #endif
 
   public:

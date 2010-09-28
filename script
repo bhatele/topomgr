@@ -1,0 +1,7 @@
+diff ../../charm/src/util/BGLTorus.h BGLTorus.h > DIFF_NEW
+diff ../../charm/src/util/BGPTorus.h BGPTorus.h >> DIFF_NEW
+diff ../../charm/src/util/CrayNid.c CrayNid.c >> DIFF_NEW
+diff ../../charm/src/util/TopoManager.C TopoManager.C >> DIFF_NEW
+diff ../../charm/src/util/TopoManager.h TopoManager.h >> DIFF_NEW
+diff ../../charm/src/util/XT3Torus.h XT3Torus.h >> DIFF_NEW
+diff ../../charm/src/util/XTTorus.h XTTorus.h >> DIFF_NEW
