@@ -1,34 +1,34 @@
-========================================================================
-			THE TOPOMANAGER API
-========================================================================
+==============================================================================
+			    THE TOPOMANAGER API
+==============================================================================
 
   Author: Abhinav S Bhatele
   Date Created: May 11th, 2008
   E-mail: bhatele AT illinois.edu
 
-------------------------------------------------------------------------
+------------------------------------------------------------------------------
 
 The TopoManager API provides runtime information about the allocated job
 partition on IBM Blue Gene and Cray XT machines. For documentation, read
 "TopoManager.h". This is the only file which needs to interface with the
 application.
 
-------------------------------------------------------------------------
+------------------------------------------------------------------------------
 COMPILE:
-------------------------------------------------------------------------
-To compile, edit the Makefile so that the variables are set for the
-right architecture.
+------------------------------------------------------------------------------
+To compile, edit the Makefile so that the variables are set for the right
+architecture.
 
 Type make which will create libtmgr.a. Add -ltmgr at the link line.
 
-------------------------------------------------------------------------
+------------------------------------------------------------------------------
 CITATION:
-------------------------------------------------------------------------
+------------------------------------------------------------------------------
 Any published work which utilizes this API should include the following
 reference:
 
-"A. Bhatele and L. V. Kale, Benefits of Topology Aware Mapping for Mesh 
-Interconnects, Parallel Processing Letters (Special Issue on Large Scale
-Parallel Processing), Vol:18, Issue:4, Pages 549-566, 2008."
+"Abhinav Bhatele, Eric Bohm, Laxmikant V. Kale, A Case Study of Communication
+Optimizations on 3D Mesh Interconnects, Proceedings of Euro-Par (Topic 13 -
+High Performance Networks), LNCS 5704, pp. 1015-1028, 2009"
 
-========================================================================
+==============================================================================
