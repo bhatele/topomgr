@@ -37,20 +37,30 @@
 #include "blue.h"
 #endif
 
+void CmiAssert(bool condition) {
+  if(condition == false)
+    abort();
+}
+
+void CmiAbort(const char *error) {
+  printf("%s", error);
+  abort();
+}
+
 class TopoManager {
   public:
     TopoManager();
     TopoManager(int NX, int NY, int NZ, int NT);
     ~TopoManager() { }
 
-    inline int getDimNX() { return dimNX; }
-    inline int getDimNY() { return dimNY; }
-    inline int getDimNZ() { return dimNZ; }
-    inline int getDimNT() { return dimNT; }
+    inline int getDimNX() const { return dimNX; }
+    inline int getDimNY() const { return dimNY; }
+    inline int getDimNZ() const { return dimNZ; }
+    inline int getDimNT() const { return dimNT; }
 
-    inline int getProcsPerNode() { return procsPerNode; }
+    inline int getProcsPerNode() const { return procsPerNode; }
 
-    int hasMultipleProcsPerNode();
+    int hasMultipleProcsPerNode() const;
     void rankToCoordinates(int pe, int &x, int &y, int &z, int &t);
     int coordinatesToRank(int x, int y, int z, int t);
     int getHopsBetweenRanks(int pe1, int pe2);
@@ -69,10 +79,7 @@ class TopoManager {
     inline int absX(int x) {
       int px = abs(x);
       int sx = dimNX - px;
-      if (sx<0) { // CmiAssert(sx>=0);
-        printf("ERROR!!!\n");
-        abort();
-      }
+      CmiAssert(sx>=0);
       if(torusX)
         return ((px>sx) ? sx : px);
       else
@@ -82,10 +89,7 @@ class TopoManager {
     inline int absY(int y) {
       int py = abs(y);
       int sy = dimNY - py;
-      if (sy<0) { // CmiAssert(sy>=0);
-        printf("ERROR!!!\n");
-        abort();
-      }
+      CmiAssert(sy>=0);
       if(torusY)
         return ((py>sy) ? sy : py);
       else
@@ -95,10 +99,7 @@ class TopoManager {
     inline int absZ(int z) {
       int pz = abs(z);
       int sz = dimNZ - pz;
-      if (sz<0) { // CmiAssert(sz>=0);
-        printf("ERROR!!!\n");
-        abort();
-      }
+      CmiAssert(sz>=0);
       if(torusZ)
         return ((pz>sz) ? sz : pz);
       else
@@ -113,6 +114,7 @@ class TopoManager {
     int dimNY;	// dimension of the allocation in Y (no. of nodes)
     int dimNZ;	// dimension of the allocation in Z (no. of nodes)
     int dimNT;  // dimension of the allocation in T (no. of processors per node)
+    int numPes;
     int torusX, torusY, torusZ, torusT;
     int procsPerNode;
 
