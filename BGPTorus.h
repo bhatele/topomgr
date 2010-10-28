@@ -40,9 +40,8 @@ class BGPTorusManager {
       hw_NY = bgp_hwt.ySize;
       hw_NZ = bgp_hwt.zSize;
     
-      procsPerNode = bgp_hwt.tSize;  
-      int numPes;
-      MPI_Comm_size(MPI_COMM_WORLD, &numPes);
+      procsPerNode = bgp_hwt.tSize;
+      int numPes = CmiNumPes();
       thdsPerProc = 1;
 
       hw_NT = procsPerNode*thdsPerProc;      

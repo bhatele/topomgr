@@ -47,6 +47,13 @@ void CmiAbort(const char *error) {
   abort();
 }
 
+void CmiNumPes() {
+  int numPes;
+  MPI_Comm_size(MPI_COMM_WORLD, &numPes);
+
+  return numPes;
+}
+
 class TopoManager {
   public:
     TopoManager();

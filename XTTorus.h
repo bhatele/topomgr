@@ -67,12 +67,11 @@ class XTTorusManager {
       int i, j, k, l;
       int minX=XDIM, minY=YDIM, minZ=ZDIM, minT=0, maxX=0, maxY=0, maxZ=0;
 
-      int numprocs;
-      MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
-      pid2coords = (struct loc*)malloc(sizeof(struct loc) * numprocs);
+      int numPes = CmiNumPes();
+      pid2coords = (struct loc*)malloc(sizeof(struct loc) * numPes);
 
       // fill the nid2pid and pid2nid data structures
-      pidtonid(numprocs);
+      pidtonid(numPes);
 
       for(i=0; i<XDIM; i++)
 	for(j=0; j<YDIM; j++)
@@ -82,7 +81,7 @@ class XTTorusManager {
 
       dimNT = 1;			// assume SN mode first
       // now fill the coords2pid and pid2coords data structures
-      for(i=0; i<numprocs; i++)
+      for(i=0; i<numPes; i++)
       {
         nid = pid2nid[i];
 	if (nid != oldnid)
