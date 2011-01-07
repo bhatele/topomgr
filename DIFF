@@ -2,13 +2,10 @@
 10,11d9
 < #include "converse.h"
 < 
-46,48c44,47
-<       int numPes = CmiNumPes();      
+47,48c45,46
 <       thdsPerProc = CmiMyNodeSize();
 <       
 ---
->       int numPes;
->       MPI_Comm_size(MPI_COMM_WORLD, &numPes);
 >       thdsPerProc = 1;
 > 
 =========================== CrayNid.c ==========================================
@@ -16,16 +13,6 @@
 < #include "converse.h"
 < 
 =========================== TopoManager.C ======================================
-141c141,142
-<   CmiAbort("This function should not be called on Cray XT machines\n");
----
->   printf("This function should not be called on Cray XT machines\n");
->   abort();
-222c223,224
-<   CmiAbort("This function should not be called on Cray XT machines\n");
----
->   printf("This function should not be called on Cray XT machines\n");
->   abort();
 =========================== TopoManager.h ======================================
 22c22,24
 < #include "charm.h"
@@ -33,51 +20,29 @@
 > #include <mpi.h>
 > #include <stdio.h>
 > #include <stdlib.h>
-70c72,75
-<       CmiAssert(sx>=0);
----
->       if (sx<0) { // CmiAssert(sx>=0);
->         printf("ERROR!!!\n");
->         abort();
->       }
-80c85,88
-<       CmiAssert(sy>=0);
----
->       if (sy<0) { // CmiAssert(sy>=0);
->         printf("ERROR!!!\n");
->         abort();
->       }
-90c98,101
-<       CmiAssert(sz>=0);
----
->       if (sz<0) { // CmiAssert(sz>=0);
->         printf("ERROR!!!\n");
->         abort();
->       }
+37a40,56
+> void CmiAssert(bool condition) {
+>   if(condition == false)
+>     abort();
+> }
+> 
+> void CmiAbort(const char *error) {
+>   printf("%s", error);
+>   abort();
+> }
+> 
+> void CmiNumPes() {
+>   int numPes;
+>   MPI_Comm_size(MPI_COMM_WORLD, &numPes);
+> 
+>   return numPes;
+> }
+> 
 =========================== XT3Torus.h =========================================
 19,20d18
 < #include "converse.h"
 < 
-67c65,66
-<       int numprocs = CmiNumPes();
----
->       int numprocs;
->       MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
 =========================== XTTorus.h ==========================================
-10d9
+10,11d9
 < #include "converse.h"
-70c69,72
-<       pid2coords = (struct loc*)malloc(sizeof(struct loc) * CmiNumPes());
----
-> 
->       int numprocs;
->       MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
->       pid2coords = (struct loc*)malloc(sizeof(struct loc) * numprocs);
-73c75
-<       pidtonid(CmiNumPes());
----
->       pidtonid(numprocs);
-83c85
-<       for(int i=0; i<CmiNumPes(); i++)
----
->       for(i=0; i<numprocs; i++)
+< 
