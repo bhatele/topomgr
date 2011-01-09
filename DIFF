@@ -1,3 +1,6 @@
+=========================== BGLTorus.h =========================================
+11d10
+< #include "converse.h"
 =========================== BGPTorus.h =========================================
 10,11d9
 < #include "converse.h"
@@ -9,18 +12,22 @@
 >       thdsPerProc = 1;
 > 
 =========================== CrayNid.c ==========================================
-10,11d9
+10c10
 < #include "converse.h"
-< 
+---
+> #include <stdlib.h>
 =========================== TopoManager.C ======================================
+227a228
+>   return -1;
 =========================== TopoManager.h ======================================
-22c22,24
+22c22,43
 < #include "charm.h"
 ---
 > #include <mpi.h>
 > #include <stdio.h>
 > #include <stdlib.h>
-37a40,56
+> 
+> #if INC_GLOBALS
 > void CmiAssert(bool condition) {
 >   if(condition == false)
 >     abort();
@@ -31,13 +38,25 @@
 >   abort();
 > }
 > 
-> void CmiNumPes() {
+> int CmiNumPes() {
 >   int numPes;
 >   MPI_Comm_size(MPI_COMM_WORLD, &numPes);
 > 
 >   return numPes;
 > }
-> 
+> #endif
+70c91
+<       CmiAssert(sx>=0);
+---
+>       // CmiAssert(sx>=0);
+80c101
+<       CmiAssert(sy>=0);
+---
+>       // CmiAssert(sy>=0);
+90c111
+<       CmiAssert(sz>=0);
+---
+>       // CmiAssert(sz>=0);
 =========================== XT3Torus.h =========================================
 19,20d18
 < #include "converse.h"

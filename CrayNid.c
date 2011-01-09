@@ -7,6 +7,8 @@
  *  can be called from C++ files
  */
 
+#include <stdlib.h>
+
 #if CMK_CRAYXT
 
 #if XT3_TOPOLOGY

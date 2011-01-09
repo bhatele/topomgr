@@ -23,6 +23,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#if INC_GLOBALS
+void CmiAssert(bool condition) {
+  if(condition == false)
+    abort();
+}
+
+void CmiAbort(const char *error) {
+  printf("%s", error);
+  abort();
+}
+
+int CmiNumPes() {
+  int numPes;
+  MPI_Comm_size(MPI_COMM_WORLD, &numPes);
+
+  return numPes;
+}
+#endif
+
 #if CMK_BLUEGENEL
 #include "BGLTorus.h"
 #elif CMK_BLUEGENEP
@@ -36,23 +55,6 @@
 #if CMK_BLUEGENE_CHARM
 #include "blue.h"
 #endif
-
-void CmiAssert(bool condition) {
-  if(condition == false)
-    abort();
-}
-
-void CmiAbort(const char *error) {
-  printf("%s", error);
-  abort();
-}
-
-void CmiNumPes() {
-  int numPes;
-  MPI_Comm_size(MPI_COMM_WORLD, &numPes);
-
-  return numPes;
-}
 
 class TopoManager {
   public:
@@ -86,7 +88,7 @@ class TopoManager {
     inline int absX(int x) {
       int px = abs(x);
       int sx = dimNX - px;
-      CmiAssert(sx>=0);
+      // CmiAssert(sx>=0);
       if(torusX)
         return ((px>sx) ? sx : px);
       else
@@ -96,7 +98,7 @@ class TopoManager {
     inline int absY(int y) {
       int py = abs(y);
       int sy = dimNY - py;
-      CmiAssert(sy>=0);
+      // CmiAssert(sy>=0);
       if(torusY)
         return ((py>sy) ? sy : py);
       else
@@ -106,7 +108,7 @@ class TopoManager {
     inline int absZ(int z) {
       int pz = abs(z);
       int sz = dimNZ - pz;
-      CmiAssert(sz>=0);
+      // CmiAssert(sz>=0);
       if(torusZ)
         return ((pz>sz) ? sz : pz);
       else

@@ -8,7 +8,6 @@
 #define _BGL_TORUS_H_
 
 #include <string.h>
-#include "converse.h"
 
 #if CMK_BLUEGENEL
 
