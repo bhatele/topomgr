@@ -37,7 +37,7 @@ CrayNid.o: CrayNid.c
 	$(CC) $(COPTS) -o CrayNid.o CrayNid.c
 
 test: test.C
-	$(CXX) -c -O3 -o test.o test.C
+	$(CXX) $(COPTS) -o test.o test.C
 	$(CXX) -o test test.o libtmgr.a $(LOPTS)
 
 clean:

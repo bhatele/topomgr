@@ -1,3 +1,9 @@
+/** \file test.C
+ *
+ */
+
+extern int CmiNumPes();
+
 #include "TopoManager.h"
 #include <stdio.h>
 #ifdef CMK_BLUEGENEL
