@@ -46,9 +46,9 @@ int main(int argc, char *argv[]) {
       rts_coordinatesForRank(i, &tmp_x, &tmp_y, &tmp_z, &tmp_t);
       printf("Real Processor %d ---> x %d y %d z %d t %d\n", i, tmp_x, tmp_y, tmp_z, tmp_t);
 #elif CMK_BLUEGENEP
-      unsigned int tmp_t, tmp_x, tmp_y, tmp_z;
-      DCMF_Messager_rank2torus(i, &tmp_x, &tmp_y, &tmp_z, &tmp_t);
-      printf("Real Processor %d ---> x %d y %d z %d t %d\n", i, tmp_x, tmp_y, tmp_z, tmp_t);
+      DCMF_NetworkCoord_t coords;
+      DCMF_Messager_rank2network(i, DCMF_TORUS_NETWORK, &coords);
+      printf("Real Processor %d ---> x %d y %d z %d t %d\n", i, coords.torus.x, coords.torus.y, coords.torus.z, coords.torus.t);
 #elif XT3_TOPOLOGY
       int tmp_t, tmp_x, tmp_y, tmp_z;
       xt3tm.realRankToCoordinates(i, tmp_x, tmp_y, tmp_z, tmp_t);
