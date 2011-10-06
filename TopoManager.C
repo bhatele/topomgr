@@ -99,7 +99,7 @@ TopoManager::TopoManager() {
   torusT = false;
 #endif
 
-#if CMK_BLUEGENE_CHARM
+#if CMK_BIGSIM_CHARM
   BgGetSize(&dimNX, &dimNY, &dimNZ);
 
   dimNT = procsPerNode = BgGetNumWorkThread();
@@ -125,6 +125,8 @@ TopoManager::TopoManager(int NX, int NY, int NZ, int NT) : dimNX(NX), dimNY(NY),
   torusX = true;
   torusY = true;
   torusZ = true;
+
+  numPes = dimNX * dimNY * dimNZ * dimNT;
 }
 
 int TopoManager::hasMultipleProcsPerNode() const {
@@ -156,7 +158,7 @@ void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z) {
   }
 #endif
 
-#if CMK_BLUEGENE_CHARM
+#if CMK_BIGSIM_CHARM
   if(dimY > 1){
     // Assumed TXYZ
     x = pe % dimX;
@@ -195,7 +197,7 @@ void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z, int &t) {
   }
 #endif
 
-#if CMK_BLUEGENE_CHARM
+#if CMK_BIGSIM_CHARM
   if(dimNY > 1) {
     t = pe % dimNT;
     x = (pe % (dimNT*dimNX)) / dimNT;
@@ -212,7 +214,7 @@ void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z, int &t) {
 
 int TopoManager::coordinatesToRank(int x, int y, int z) {
   CmiAssert( x>=0 && x<dimX && y>=0 && y<dimY && z>=0 && z<dimZ );
-#if CMK_BLUEGENE_CHARM
+#if CMK_BIGSIM_CHARM
   if(dimY > 1)
     return x + y*dimX + z*dimX*dimY;
   else
@@ -236,7 +238,7 @@ int TopoManager::coordinatesToRank(int x, int y, int z) {
 
 int TopoManager::coordinatesToRank(int x, int y, int z, int t) {
   CmiAssert( x>=0 && x<dimNX && y>=0 && y<dimNY && z>=0 && z<dimNZ && t>=0 && t<dimNT );
-#if CMK_BLUEGENE_CHARM
+#if CMK_BIGSIM_CHARM
   if(dimNY > 1)
     return t + (x + (y + z*dimNY) * dimNX) * dimNT;
   else
@@ -269,10 +271,7 @@ int TopoManager::getHopsBetweenRanks(int pe1, int pe2) {
 }
 
 void TopoManager::sortRanksByHops(int pe, int *pes, int *idx, int n) {
-  int minHops = getHopsBetweenRanks(pe, pes[0]);
-  int minIdx = 0;
-  int nowHops, tmp;
-  for(int i=0;i<n;i++)
+  for(int i=0; i<n; i++)
     idx[i] = i;
   quicksort(pe, pes, idx, 0, n-1);
 }
