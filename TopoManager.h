@@ -19,7 +19,6 @@
 #ifndef _TOPO_MANAGER_H_
 #define _TOPO_MANAGER_H_
 
-#include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
 

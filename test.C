@@ -4,8 +4,10 @@
 
 extern int CmiNumPes();
 
-#include "TopoManager.h"
+#include <mpi.h>
 #include <stdio.h>
+
+#include "TopoManager.h"
 #ifdef CMK_BLUEGENEL
 #include <bglpersonality.h>
 #elif CMK_BLUEGENEP
