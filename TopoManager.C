@@ -10,7 +10,7 @@
 
 #include "TopoManager.h"
 
-TopoManager::TopoManager() {
+TopoManager::TopoManager(int _numPes) : numPes(_numPes) {
 #if CMK_BLUEGENEL
   dimX = bgltm.getDimX();
   dimY = bgltm.getDimY();
@@ -30,18 +30,20 @@ TopoManager::TopoManager() {
   torusT = torus[3];
 
 #elif CMK_BLUEGENEP
-  dimX = bgptm.getDimX();
-  dimY = bgptm.getDimY();
-  dimZ = bgptm.getDimZ();
+  bgptm = new BGPTorusManager(numPes);
 
-  dimNX = bgptm.getDimNX();
-  dimNY = bgptm.getDimNY();
-  dimNZ = bgptm.getDimNZ();
-  dimNT = bgptm.getDimNT();
+  dimX = bgptm->getDimX();
+  dimY = bgptm->getDimY();
+  dimZ = bgptm->getDimZ();
 
-  procsPerNode = bgptm.getProcsPerNode();
+  dimNX = bgptm->getDimNX();
+  dimNY = bgptm->getDimNY();
+  dimNZ = bgptm->getDimNZ();
+  dimNT = bgptm->getDimNT();
+
+  procsPerNode = bgptm->getProcsPerNode();
   int *torus;
-  torus = bgptm.isTorus();
+  torus = bgptm->isTorus();
   torusX = torus[0];
   torusY = torus[1];
   torusZ = torus[2];
@@ -113,7 +115,6 @@ TopoManager::TopoManager() {
   torusT = false;
 #endif
 
-  numPes = dimNX * dimNY * dimNZ * dimNT;
 }
 
 TopoManager::TopoManager(int NX, int NY, int NZ, int NT) : dimNX(NX), dimNY(NY), dimNZ(NZ), dimNT(NT) {
@@ -137,13 +138,17 @@ int TopoManager::hasMultipleProcsPerNode() const {
 }
 
 void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z) {
-  CmiAssert( pe >= 0 && pe < numPes );
+  if(pe < 0 || pe >= numPes) {
+    printf("Processor number %d out of range\n", pe);
+    abort();
+  }
 #if CMK_BLUEGENEL
   bgltm.rankToCoordinates(pe, x, y, z);
 #elif CMK_BLUEGENEP
-  bgptm.rankToCoordinates(pe, x, y, z);
+  bgptm->rankToCoordinates(pe, x, y, z);
 #elif XT3_TOPOLOGY || XT4_TOPOLOGY || XT5_TOPOLOGY
-  CmiAbort("This function should not be called on Cray XT machines\n");
+  printf("This function should not be called on Cray XT machines\n");
+  abort();
 #else
   if(dimY > 1){
     // Assumed TXYZ
@@ -174,11 +179,14 @@ void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z) {
 }
 
 void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z, int &t) {
-  CmiAssert( pe >= 0 && pe < numPes );
+  if(pe < 0 || pe >= numPes) {
+    printf("Processor number %d out of range\n", pe);
+    abort();
+  }
 #if CMK_BLUEGENEL
   bgltm.rankToCoordinates(pe, x, y, z, t);
 #elif CMK_BLUEGENEP
-  bgptm.rankToCoordinates(pe, x, y, z, t);
+  bgptm->rankToCoordinates(pe, x, y, z, t);
 #elif XT3_TOPOLOGY
   xt3tm.rankToCoordinates(pe, x, y, z, t);
 #elif XT4_TOPOLOGY || XT5_TOPOLOGY
@@ -213,7 +221,10 @@ void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z, int &t) {
 }
 
 int TopoManager::coordinatesToRank(int x, int y, int z) {
-  CmiAssert( x>=0 && x<dimX && y>=0 && y<dimY && z>=0 && z<dimZ );
+  if(x<0 || x>=dimX || y<0 || y>=dimY || z<0 || z>=dimZ) {
+    printf("A coordinate is out of range\n");
+    abort();
+  }
 #if CMK_BIGSIM_CHARM
   if(dimY > 1)
     return x + y*dimX + z*dimX*dimY;
@@ -224,7 +235,7 @@ int TopoManager::coordinatesToRank(int x, int y, int z) {
 #if CMK_BLUEGENEL
   return bgltm.coordinatesToRank(x, y, z);
 #elif CMK_BLUEGENEP
-  return bgptm.coordinatesToRank(x, y, z);
+  return bgptm->coordinatesToRank(x, y, z);
 #elif XT3_TOPOLOGY || XT4_TOPOLOGY || XT5_TOPOLOGY
   CmiAbort("This function should not be called on Cray XT machines\n");
   return -1;
@@ -237,7 +248,10 @@ int TopoManager::coordinatesToRank(int x, int y, int z) {
 }
 
 int TopoManager::coordinatesToRank(int x, int y, int z, int t) {
-  CmiAssert( x>=0 && x<dimNX && y>=0 && y<dimNY && z>=0 && z<dimNZ && t>=0 && t<dimNT );
+  if(x<0 || x>=dimNX || y<0 || y>=dimNY || z<0 || z>=dimNZ || t<0 || t>=dimNT) {
+    printf("A coordinate is out of range\n");
+    abort();
+  }
 #if CMK_BIGSIM_CHARM
   if(dimNY > 1)
     return t + (x + (y + z*dimNY) * dimNX) * dimNT;
@@ -248,7 +262,7 @@ int TopoManager::coordinatesToRank(int x, int y, int z, int t) {
 #if CMK_BLUEGENEL
   return bgltm.coordinatesToRank(x, y, z, t);
 #elif CMK_BLUEGENEP
-  return bgptm.coordinatesToRank(x, y, z, t);
+  return bgptm->coordinatesToRank(x, y, z, t);
 #elif XT3_TOPOLOGY
   return xt3tm.coordinatesToRank(x, y, z, t);
 #elif XT4_TOPOLOGY || XT5_TOPOLOGY
@@ -262,8 +276,6 @@ int TopoManager::coordinatesToRank(int x, int y, int z, int t) {
 }
 
 int TopoManager::getHopsBetweenRanks(int pe1, int pe2) {
-  CmiAssert( pe1 >= 0 && pe1 < numPes );
-  CmiAssert( pe2 >= 0 && pe2 < numPes );
   int x1, y1, z1, x2, y2, z2, t1, t2;
   rankToCoordinates(pe1, x1, y1, z1, t1);
   rankToCoordinates(pe2, x2, y2, z2, t2);

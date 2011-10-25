@@ -23,31 +23,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if INC_GLOBALS
-void CmiAssert(bool condition) {
-  if(condition == false)
-    abort();
-}
-
-void CmiAbort(const char *error) {
-  printf("%s", error);
-  abort();
-}
-
-int CmiNumPes() {
-  int numPes;
-  MPI_Comm_size(MPI_COMM_WORLD, &numPes);
-
-  return numPes;
-}
-#endif
-
-#if CMK_BLUEGENEL
+#if defined(__blrts__)
+#define CMK_BLUEGENEL  1
 #include "BGLTorus.h"
-#elif CMK_BLUEGENEP
+
+#elif defined(__bgp__)
+#define CMK_BLUEGENEP  1
 #include "BGPTorus.h"
+
 #elif XT3_TOPOLOGY
 #include "XT3Torus.h"
+
 #elif XT4_TOPOLOGY || XT5_TOPOLOGY
 #include "XTTorus.h"
 #endif
@@ -58,7 +44,7 @@ int CmiNumPes() {
 
 class TopoManager {
   public:
-    TopoManager();
+    TopoManager(int _numPes);
     TopoManager(int NX, int NY, int NZ, int NT);
     ~TopoManager() { }
 
@@ -128,13 +114,13 @@ class TopoManager {
     int procsPerNode;
 
 #if CMK_BLUEGENEL
-    BGLTorusManager bgltm;
+    BGLTorusManager *bgltm;
 #elif CMK_BLUEGENEP
-    BGPTorusManager bgptm;
+    BGPTorusManager *bgptm;
 #elif XT3_TOPOLOGY
-    XT3TorusManager xt3tm;
+    XT3TorusManager *xt3tm;
 #elif XT4_TOPOLOGY || XT5_TOPOLOGY
-    XTTorusManager xttm;
+    XTTorusManager *xttm;
 #endif
 
     void quicksort(int pe, int *pes, int *arr, int left, int right);

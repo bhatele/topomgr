@@ -34,20 +34,17 @@ class BGPTorusManager {
     char *mapping;
 
   public:
-    BGPTorusManager() {
+    BGPTorusManager(int _numPes) {
       DCMF_Hardware(&bgp_hwt);
       hw_NX = bgp_hwt.xSize;
       hw_NY = bgp_hwt.ySize;
       hw_NZ = bgp_hwt.zSize;
     
       procsPerNode = bgp_hwt.tSize;
-      int numPes = CmiNumPes();
+      int numPes = _numPes;
       thdsPerProc = 1;
 
       hw_NT = procsPerNode*thdsPerProc;      
-
-
-      //if(CmiMyPe()==0) printf("hw_NX/Y/Z/T=[%d, %d, %d, %d]\n", hw_NX, hw_NY, hw_NZ, hw_NT);
 
       //initialize the rn_N(*) to hw_N(*), then adjust them
       rn_NX = hw_NX;

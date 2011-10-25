@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     printf("Testing TopoManager .... \n");
     printf("MPI Job Size: %d cores\n\n", numprocs);
     
-    TopoManager tmgr;
+    TopoManager tmgr = TopoManager(numprocs);
     printf("Torus Size [%d] [%d] [%d] [%d]\n\n", tmgr.getDimNX(), tmgr.getDimNY(), tmgr.getDimNZ(), tmgr.getDimNT());
 
     for(int i=0; i<numprocs; i++) {
