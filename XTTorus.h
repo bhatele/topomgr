@@ -62,12 +62,12 @@ class XTTorusManager {
     struct loc origin;
 
   public:
-    XTTorusManager() {
+    XTTorusManager(int _numPes) {
       int nid = 0, oldnid = -1, lx, ly, lz;
       int i, j, k, l;
       int minX=XDIM, minY=YDIM, minZ=ZDIM, minT=0, maxX=0, maxY=0, maxZ=0;
 
-      int numPes = CmiNumPes();
+      int numPes = _numPes;
       pid2coords = (struct loc*)malloc(sizeof(struct loc) * numPes);
 
       // fill the nid2pid and pid2nid data structures

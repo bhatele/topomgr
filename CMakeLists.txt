@@ -6,13 +6,15 @@ cmake_minimum_required (VERSION 2.6)
 project (topomgr)
 
 string (REGEX MATCH "^BlueGeneP" BlueGeneP "${CMAKE_SYSTEM_NAME}")
-if (NOT BlueGeneP)
+string (REGEX MATCH "^XT" CrayXT "${CMAKE_SYSTEM_PROCESSOR}")
+
+if (NOT (BlueGeneP OR CrayXT) )
   message(FATAL_ERROR " TopoManager module only builds on Blue Gene and XT/XE."
     "\n Perhaps you forgot to specify a toolchain file, e.g.:\n"
     "   cmake -DCMAKE_TOOLCHAIN_FILE=../BGP-gnu.cmake ..")
 endif ()
 
-find_package (MPI REQUIRED)
+find_package (MPI REQUIRED HINTS ${MPICH_DIR})
 
 # Build shared libraries by default.
 get_property (DEFAULT_SHARED GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS)
