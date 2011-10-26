@@ -2,18 +2,18 @@
  *  Author: Abhinav S Bhatele
  *  Date Created: March 19th, 2007
  *
- *  This would be the top level interface for all topology managers we
- *  will write for different machines (Cray, IBM ... for tori, meshes ...)
- *  Current we have functionality for Blue Gene, Cray XT, BigSim and 
- *  non-topo machines.
+ *  This is the top level interface for topology managers we for different
+ *  machines (Cray, IBM ... for tori, meshes ...) Current we have functionality
+ *  for Blue Gene, Cray XT/XE, BigSim and non-topo machines.
  *
  *  Any published work which utilizes this API should include the following
  *  reference:
  *
- *  "Abhinav Bhatele, Eric Bohm, Laxmikant V. Kale, A Case Study of
- *  Communication Optimizations on 3D Mesh Interconnects, Proceedings of
- *  Euro-Par (Topic 13 - High Performance Networks), LNCS 5704, pp. 1015-1028,
- *  2009"
+ *  Abhinav Bhatele, Eric Bohm, Laxmikant V. Kale, Optimizing communication for
+ *  Charm++ applications by reducing network contention, Concurrency and
+ *  Computation: Practice and Experience (EuroPar special issue), Vol: 23,
+ *  Issue: 2, Pages: 211-222, 2011"
+ *
  */
 
 #ifndef _TOPO_MANAGER_H_

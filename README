@@ -9,17 +9,19 @@
 ------------------------------------------------------------------------------
 
 The TopoManager API provides runtime information about the allocated job
-partition on IBM Blue Gene and Cray XT machines. For documentation, read
+partition on IBM Blue Gene and Cray XT/XE machines. For documentation, read
 "TopoManager.h". This is the only file which needs to interface with the
 application.
+
 
 ------------------------------------------------------------------------------
 COMPILE:
 ------------------------------------------------------------------------------
-To compile, edit the Makefile so that the variables are set for the right
-architecture.
+mkdir build && cd build
+cmake -DCMAKE_TOOLCHAIN_FILE=../BGP-gnu.cmake ..
+make
+make install
 
-Type make which will create libtmgr.a. Add -ltmgr at the link line.
 
 ------------------------------------------------------------------------------
 CITATION:
