@@ -10,30 +10,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#if XT4_TOPOLOGY || XT5_TOPOLOGY
+#if CMK_CRAYXT
 
 // XDIM, YDIM, ZDIM and MAXNID depend on a specific Cray installation.
 // Please do NOT expect things to work if you use this code on a new
 // Cray machine.
 
-#if XT4_TOPOLOGY
-#define MAXNID 14000
-#define XDIM 21
-#define YDIM 16
+#define MAXNID 6600 // Values for Hopper
+#define XDIM 17
+#define YDIM 8
 #define ZDIM 24
-#define TDIM 4
+#define TDIM 24
 
-#elif XT5_TOPOLOGY
-#define MAXNID 22020
-#define XDIM 25
-#define YDIM 32
-#define ZDIM 24
-#define TDIM 12
-
-#endif
-
-extern "C" int *pid2nid;
-extern "C" int nid2pid[MAXNID][TDIM];
+extern "C" int *pid2nid;		/* rank to node ID */
+extern "C" int nid2pid[MAXNID][TDIM];	/* node ID to rank */
 extern "C" int pidtonid(int numpes);
 extern "C" int getMeshCoord(int nid, int *x, int *y, int *z);
 
@@ -171,5 +161,5 @@ class XTTorusManager {
     }
 };
 
-#endif // XT4_TOPOLOGY || XT5_TOPOLOGY
+#endif // CMK_CRAYXT
 #endif //_XT_TORUS_H_

@@ -27,9 +27,7 @@ int main(int argc, char *argv[]) {
 #elif CMK_BLUEGENEP
     DCMF_Hardware_t bgp_hwt;
     DCMF_Hardware(&bgp_hwt);
-#elif XT3_TOPOLOGY
-    XT3TorusManager xt3tm;
-#elif XT4_TOPOLOGY || XT5_TOPOLOGY
+#elif CMK_CRAYXT
     XTTorusManager xttm(numprocs);
 #endif
 
@@ -51,11 +49,7 @@ int main(int argc, char *argv[]) {
       DCMF_NetworkCoord_t coords;
       DCMF_Messager_rank2network(i, DCMF_TORUS_NETWORK, &coords);
       printf("Real Processor %d ---> x %d y %d z %d t %d\n", i, coords.torus.x, coords.torus.y, coords.torus.z, coords.torus.t);
-#elif XT3_TOPOLOGY
-      int tmp_t, tmp_x, tmp_y, tmp_z;
-      xt3tm.realRankToCoordinates(i, tmp_x, tmp_y, tmp_z, tmp_t);
-      printf("Real Processor %d ---> x %d y %d z %d t %d\n", i, tmp_x, tmp_y, tmp_z, tmp_t);
-#elif XT4_TOPOLOGY || XT5_TOPOLOGY
+#elif CMK_CRAYXT
       int tmp_t, tmp_x, tmp_y, tmp_z;
       xttm.realRankToCoordinates(i, tmp_x, tmp_y, tmp_z, tmp_t);
       printf("Real Processor %d ---> x %d y %d z %d t %d\n", i, tmp_x, tmp_y, tmp_z, tmp_t);

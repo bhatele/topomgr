@@ -30,10 +30,7 @@
 #define CMK_BLUEGENEP  1
 #include "BGPTorus.h"
 
-#elif XT3_TOPOLOGY
-#include "XT3Torus.h"
-
-#elif XT4_TOPOLOGY || XT5_TOPOLOGY
+#elif CMK_CRAYXT
 #include "XTTorus.h"
 #endif
 
@@ -116,9 +113,7 @@ class TopoManager {
     BGLTorusManager *bgltm;
 #elif CMK_BLUEGENEP
     BGPTorusManager *bgptm;
-#elif XT3_TOPOLOGY
-    XT3TorusManager *xt3tm;
-#elif XT4_TOPOLOGY || XT5_TOPOLOGY
+#elif CMK_CRAYXT
     XTTorusManager *xttm;
 #endif
 

@@ -1,5 +1,5 @@
 *.o
-libtmgr.a
+libtopomgr.*
 test
 
 build

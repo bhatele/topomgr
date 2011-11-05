@@ -49,25 +49,7 @@ TopoManager::TopoManager(int _numPes) : numPes(_numPes) {
   torusZ = torus[2];
   torusT = torus[3];
 
-#elif XT3_TOPOLOGY
-  dimX = xt3tm.getDimX();
-  dimY = xt3tm.getDimY();
-  dimZ = xt3tm.getDimZ();
-
-  dimNX = xt3tm.getDimNX();
-  dimNY = xt3tm.getDimNY();
-  dimNZ = xt3tm.getDimNZ();
-  dimNT = xt3tm.getDimNT();
-
-  procsPerNode = xt3tm.getProcsPerNode();
-  int *torus;
-  torus = xt3tm.isTorus();
-  torusX = torus[0];
-  torusY = torus[1];
-  torusZ = torus[2];
-  torusT = torus[3];
-
-#elif XT4_TOPOLOGY || XT5_TOPOLOGY
+#elif CMK_CRAYXT
   xttm = new XTTorusManager(numPes);
 
   dimX = xttm->getDimX();
@@ -148,7 +130,7 @@ void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z) {
   bgltm.rankToCoordinates(pe, x, y, z);
 #elif CMK_BLUEGENEP
   bgptm->rankToCoordinates(pe, x, y, z);
-#elif XT3_TOPOLOGY || XT4_TOPOLOGY || XT5_TOPOLOGY
+#elif CMK_CRAYXT
   printf("This function should not be called on Cray XT machines\n");
   abort();
 #else
@@ -189,9 +171,7 @@ void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z, int &t) {
   bgltm.rankToCoordinates(pe, x, y, z, t);
 #elif CMK_BLUEGENEP
   bgptm->rankToCoordinates(pe, x, y, z, t);
-#elif XT3_TOPOLOGY
-  xt3tm.rankToCoordinates(pe, x, y, z, t);
-#elif XT4_TOPOLOGY || XT5_TOPOLOGY
+#elif CMK_CRAYXT
   xttm->rankToCoordinates(pe, x, y, z, t);
 #else
   if(dimNY > 1) {
@@ -238,7 +218,7 @@ int TopoManager::coordinatesToRank(int x, int y, int z) {
   return bgltm.coordinatesToRank(x, y, z);
 #elif CMK_BLUEGENEP
   return bgptm->coordinatesToRank(x, y, z);
-#elif XT3_TOPOLOGY || XT4_TOPOLOGY || XT5_TOPOLOGY
+#elif CMK_CRAYXT
   printf("This function should not be called on Cray XT machines\n");
   abort();
   return -1;
@@ -266,9 +246,7 @@ int TopoManager::coordinatesToRank(int x, int y, int z, int t) {
   return bgltm.coordinatesToRank(x, y, z, t);
 #elif CMK_BLUEGENEP
   return bgptm->coordinatesToRank(x, y, z, t);
-#elif XT3_TOPOLOGY
-  return xt3tm.coordinatesToRank(x, y, z, t);
-#elif XT4_TOPOLOGY || XT5_TOPOLOGY
+#elif CMK_CRAYXT
   return xttm->coordinatesToRank(x, y, z, t);
 #else
   if(dimNY > 1)
@@ -290,17 +268,6 @@ void TopoManager::sortRanksByHops(int pe, int *pes, int *idx, int n) {
     idx[i] = i;
   quicksort(pe, pes, idx, 0, n-1);
 }
-
-/*
-int TopoManager::pickClosestRank(int mype, int *pes, int n) {
-#if CMK_BLUEGENEL
-  return(bgltm->pickClosestRank(mype, pes, n));
-#elif XT3_TOPOLOGY
-#else 
-  return(pickClosestRank(mype,pes,n));
-#endif
-}
-*/
 
 int TopoManager::pickClosestRank(int mype, int *pes, int n){
   int minHops = getHopsBetweenRanks(mype, pes[0]);
