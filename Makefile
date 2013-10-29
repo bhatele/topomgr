@@ -3,9 +3,9 @@
 
 # ==============================================================================
 # Blue Gene/P
-CC      = mpicc
-CXX     = mpicxx
-COPTS   = -c -O3
+CC      = bgxlc
+CXX     = bgxlC
+COPTS   = -c -O3 -I/bgsys/drivers/ppcfloor/comm/include/
 LOPTS   =
 
 # ==============================================================================
