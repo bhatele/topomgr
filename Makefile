@@ -20,7 +20,7 @@ all: libtopomgr.a
 libtopomgr.a: TopoManager.o CrayNid.o
 	ar -q libtopomgr.a TopoManager.o CrayNid.o
 
-TopoManager.o: TopoManager.h TopoManager.C BGLTorus.h BGPTorus.h XTTorus.h
+TopoManager.o: TopoManager.h TopoManager.C BGLTorus.h BGPTorus.h BGQTorus.h XTTorus.h
 	$(CXX) $(COPTS) -o TopoManager.o TopoManager.C
 
 CrayNid.o: CrayNid.c

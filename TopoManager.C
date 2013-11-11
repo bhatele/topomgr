@@ -2,28 +2,25 @@
  *  Author: Abhinav S Bhatele
  *  Date Created: March 19th, 2007
  *
- *  This would be the top level interface for all topology managers we
- *  will write for different machines (cray, bg/l ... for tori, meshes ...)
- *  Current plan is to have functionality for Blue Gene/L, Cray XT3,
- *  BigSim and non-topo machines.
+ *  This is the top level interface for topology managers we have for different
+ *  machines (Cray, IBM ... for tori, meshes ...) Currently, we have
+ *  functionality for Blue Gene, Cray XT/XE/XK, BigSim and non-topo machines.
  */
 
 #include "TopoManager.h"
 
 TopoManager::TopoManager(int _numPes) : numPes(_numPes) {
 #if CMK_BLUEGENEL
-  dimX = bgltm.getDimX();
-  dimY = bgltm.getDimY();
-  dimZ = bgltm.getDimZ();
+  bgltm = new BGLTorusManager(numPes);
 
-  dimNX = bgltm.getDimNX();
-  dimNY = bgltm.getDimNY();
-  dimNZ = bgltm.getDimNZ();
-  dimNT = bgltm.getDimNT();
+  dimNX = bgltm->getDimNX();
+  dimNY = bgltm->getDimNY();
+  dimNZ = bgltm->getDimNZ();
+  dimNT = bgltm->getDimNT();
 
-  procsPerNode = bgltm.getProcsPerNode();
+  procsPerNode = bgltm->getProcsPerNode();
   int *torus;
-  torus = bgltm.isTorus();
+  torus = bgltm->isTorus();
   torusX = torus[0];
   torusY = torus[1];
   torusZ = torus[2];
@@ -31,10 +28,6 @@ TopoManager::TopoManager(int _numPes) : numPes(_numPes) {
 
 #elif CMK_BLUEGENEP
   bgptm = new BGPTorusManager(numPes);
-
-  dimX = bgptm->getDimX();
-  dimY = bgptm->getDimY();
-  dimZ = bgptm->getDimZ();
 
   dimNX = bgptm->getDimNX();
   dimNY = bgptm->getDimNY();
@@ -49,12 +42,27 @@ TopoManager::TopoManager(int _numPes) : numPes(_numPes) {
   torusZ = torus[2];
   torusT = torus[3];
 
+#elif CMK_BLUEGENEQ
+  bgqtm = new BGQTorusManager(numPes);
+
+  dimNA = bgqtm->getDimNA();
+  dimNB = bgqtm->getDimNB();
+  dimNC = bgqtm->getDimNC();
+  dimND = bgqtm->getDimND();
+  dimNE = bgqtm->getDimNE();
+  dimNT = bgqtm->getDimNT();
+
+  procsPerNode = bgqtm->getProcsPerNode();
+  int *torus;
+  torus = bgqtm->isTorus();
+  torusA = torus[0];
+  torusB = torus[1];
+  torusC = torus[2];
+  torusD = torus[3];
+  torusE = torus[4];
+
 #elif CMK_CRAYXT
   xttm = new XTTorusManager(numPes);
-
-  dimX = xttm->getDimX();
-  dimY = xttm->getDimY();
-  dimZ = xttm->getDimZ();
 
   dimNX = xttm->getDimNX();
   dimNY = xttm->getDimNY();
@@ -70,11 +78,7 @@ TopoManager::TopoManager(int _numPes) : numPes(_numPes) {
   torusT = torus[3];
 
 #else
-  dimX = numPes;
-  dimY = 1;
-  dimZ = 1;
-
-  dimNX = dimX;
+  dimNX = numPes;
   dimNY = 1;
   dimNZ = 1;
 
@@ -84,33 +88,14 @@ TopoManager::TopoManager(int _numPes) : numPes(_numPes) {
   torusZ = true;
   torusT = false;
 #endif
+}
 
-#if CMK_BIGSIM_CHARM
-  BgGetSize(&dimNX, &dimNY, &dimNZ);
-
-  dimNT = procsPerNode = BgGetNumWorkThread();
-  dimX = dimNX * procsPerNode;
-  dimY = dimNY;
-  dimZ = dimNZ;
-
+TopoManager::TopoManager(int NX, int NY, int NZ, int NT) : dimNX(NX), dimNY(NY), dimNZ(NZ), dimNT(NT) {
+  procsPerNode = dimNT;
   torusX = true;
   torusY = true;
   torusZ = true;
   torusT = false;
-#endif
-
-}
-
-TopoManager::TopoManager(int NX, int NY, int NZ, int NT) : dimNX(NX), dimNY(NY), dimNZ(NZ), dimNT(NT) {
-  /* we rashly assume only one dimension is expanded */
-  procsPerNode = dimNT;
-  dimX = dimNX * dimNT;
-  dimY = dimNY;
-  dimZ = dimNZ;
-  torusX = true;
-  torusY = true;
-  torusZ = true;
-
   numPes = dimNX * dimNY * dimNZ * dimNT;
 }
 
@@ -121,54 +106,30 @@ int TopoManager::hasMultipleProcsPerNode() const {
     return 1;
 }
 
-void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z) {
+#if CMK_BLUEGENEQ
+void TopoManager::rankToCoordinates(int pe, int &a, int &b, int &c, int &d, int &e, int &t) {
   if(pe < 0 || pe >= numPes) {
     printf("Processor number %d out of range\n", pe);
     abort();
   }
-#if CMK_BLUEGENEL
-  bgltm.rankToCoordinates(pe, x, y, z);
-#elif CMK_BLUEGENEP
-  bgptm->rankToCoordinates(pe, x, y, z);
-#elif CMK_CRAYXT
-  printf("This function should not be called on Cray XT machines\n");
-  abort();
-#else
-  if(dimY > 1){
-    // Assumed TXYZ
-    x = pe % dimX;
-    y = (pe % (dimX * dimY)) / dimX;
-    z = pe / (dimX * dimY);
-  }
-  else {
-    x = pe; 
-    y = 0; 
-    z = 0;
-  }
-#endif
-
-#if CMK_BIGSIM_CHARM
-  if(dimY > 1){
-    // Assumed TXYZ
-    x = pe % dimX;
-    y = (pe % (dimX * dimY)) / dimX;
-    z = pe / (dimX * dimY);
-  }
-  else {
-    x = pe; 
-    y = 0; 
-    z = 0;
-  }
-#endif
+  bgqtm->rankToCoordinates(pe, a, b, c, d, e, t);
 }
 
+int TopoManager::coordinatesToRank(int a, int b, int c, int d, int e, int t) {
+  if( a<0 || a>=dimNA || b<0 || b>=dimNB || c<0 || c>=dimNC || d<0 || d>=dimND || e<0 || e>=dimNE || t<0 && t>=dimNT ) {
+    printf("A coordinate is out of range\n");
+    abort();
+  }
+  return bgqtm->coordinatesToRank(a, b, c, d, e, t);
+}
+#else
 void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z, int &t) {
   if(pe < 0 || pe >= numPes) {
     printf("Processor number %d out of range\n", pe);
     abort();
   }
 #if CMK_BLUEGENEL
-  bgltm.rankToCoordinates(pe, x, y, z, t);
+  bgltm->rankToCoordinates(pe, x, y, z, t);
 #elif CMK_BLUEGENEP
   bgptm->rankToCoordinates(pe, x, y, z, t);
 #elif CMK_CRAYXT
@@ -186,48 +147,6 @@ void TopoManager::rankToCoordinates(int pe, int &x, int &y, int &z, int &t) {
     z = 0;
   }
 #endif
-
-#if CMK_BIGSIM_CHARM
-  if(dimNY > 1) {
-    t = pe % dimNT;
-    x = (pe % (dimNT*dimNX)) / dimNT;
-    y = (pe % (dimNT*dimNX*dimNY)) / (dimNT*dimNX);
-    z = pe / (dimNT*dimNX*dimNY);
-  } else {
-    t = pe % dimNT;
-    x = (pe % (dimNT*dimNX)) / dimNT;
-    y = 0;
-    z = 0;
-  }
-#endif
-}
-
-int TopoManager::coordinatesToRank(int x, int y, int z) {
-  if(x<0 || x>=dimX || y<0 || y>=dimY || z<0 || z>=dimZ) {
-    printf("A coordinate is out of range\n");
-    abort();
-  }
-#if CMK_BIGSIM_CHARM
-  if(dimY > 1)
-    return x + y*dimX + z*dimX*dimY;
-  else
-    return x;
-#endif
-
-#if CMK_BLUEGENEL
-  return bgltm.coordinatesToRank(x, y, z);
-#elif CMK_BLUEGENEP
-  return bgptm->coordinatesToRank(x, y, z);
-#elif CMK_CRAYXT
-  printf("This function should not be called on Cray XT machines\n");
-  abort();
-  return -1;
-#else
-  if(dimY > 1)
-    return x + y*dimX + z*dimX*dimY;
-  else
-    return x;
-#endif
 }
 
 int TopoManager::coordinatesToRank(int x, int y, int z, int t) {
@@ -235,15 +154,9 @@ int TopoManager::coordinatesToRank(int x, int y, int z, int t) {
     printf("A coordinate is out of range\n");
     abort();
   }
-#if CMK_BIGSIM_CHARM
-  if(dimNY > 1)
-    return t + (x + (y + z*dimNY) * dimNX) * dimNT;
-  else
-    return t + x * dimNT;
-#endif
 
 #if CMK_BLUEGENEL
-  return bgltm.coordinatesToRank(x, y, z, t);
+  return bgltm->coordinatesToRank(x, y, z, t);
 #elif CMK_BLUEGENEP
   return bgptm->coordinatesToRank(x, y, z, t);
 #elif CMK_CRAYXT
@@ -255,12 +168,20 @@ int TopoManager::coordinatesToRank(int x, int y, int z, int t) {
     return t + x * dimNT;
 #endif
 }
+#endif
 
 int TopoManager::getHopsBetweenRanks(int pe1, int pe2) {
+#if CMK_BLUEGENEQ
+  int a1, b1, c1, d1, e1, t1, a2, b2, c2, d2, e2, t2;
+  rankToCoordinates(pe1, a1, b1, c1, d1, e1, t1);
+  rankToCoordinates(pe2, a2, b2, c2, d2, e2, t2);
+  return (absTorus(a2-a1, dimNA, torusA) + absTorus(b2-b1, dimNB, torusB) + absTorus(c2-c1, dimNC, torusC) + absTorus(d2-d1, dimND, torusD) + absTorus(e2-e1, dimNE, torusE));
+#else
   int x1, y1, z1, x2, y2, z2, t1, t2;
   rankToCoordinates(pe1, x1, y1, z1, t1);
   rankToCoordinates(pe2, x2, y2, z2, t2);
-  return (absX(x2-x1)+absY(y2-y1)+absZ(z2-z1));
+  return (absTorus(x2-x1, dimNX, torusX) + absTorus(y2-y1, dimNY, torusY) + absZ(z2-z1, dimNZ, torusZ));
+#endif
 }
 
 void TopoManager::sortRanksByHops(int pe, int *pes, int *idx, int n) {
@@ -284,6 +205,19 @@ int TopoManager::pickClosestRank(int mype, int *pes, int n){
 }
 
 int TopoManager::areNeighbors(int pe1, int pe2, int pe3, int distance) {
+#if CMK_BLUEGENEQ
+  int pe1_a, pe1_b, pe1_c, pe1_d, pe1_e, pe1_t;
+  int pe2_a, pe2_b, pe2_c, pe2_d, pe2_e, pe2_t;
+  int pe3_a, pe3_b, pe3_c, pe3_d, pe3_e, pe3_t;
+  rankToCoordinates(pe1, pe1_a, pe1_b, pe1_c, pe1_d, pe1_e, pe1_t);
+  rankToCoordinates(pe2, pe2_a, pe2_b, pe2_c, pe2_d, pe2_e, pe2_t);
+  rankToCoordinates(pe3, pe3_a, pe3_b, pe3_c, pe3_d, pe3_e, pe3_t);
+
+  if ( (absTorus((pe1_a - (pe2_a+pe3_a)/2), dimNA, torusA) + absTorus((pe1_b - (pe2_b+pe3_b)/2), dimNB, torusB) + absTorus((pe1_c - (pe2_c+pe3_c)/2), dimNC, torusC) + absTorus((pe1_d - (pe2_d+pe3_d)/2), dimND, torusD) + absTorus((pe1_e - (pe2_e+pe3_e)/2), dimNE, torusE) <= distance ) )
+    return 1;
+  else
+    return 0;
+#else
   int pe1_x, pe1_y, pe1_z, pe1_t;
   int pe2_x, pe2_y, pe2_z, pe2_t;
   int pe3_x, pe3_y, pe3_z, pe3_t;
@@ -292,10 +226,11 @@ int TopoManager::areNeighbors(int pe1, int pe2, int pe3, int distance) {
   rankToCoordinates(pe2, pe2_x, pe2_y, pe2_z, pe2_t);
   rankToCoordinates(pe3, pe3_x, pe3_y, pe3_z, pe3_t);
 
-  if ( (absX(pe1_x - (pe2_x+pe3_x)/2) + absY(pe1_y - (pe2_y+pe3_y)/2) + absZ(pe1_z - (pe2_z+pe3_z)/2)) <= distance )
+  if ( (absTorus(pe1_x - (pe2_x+pe3_x)/2, dimNX, torusX) + absTorus(pe1_y - (pe2_y+pe3_y)/2, dimNY, torusY) + absTorus(pe1_z - (pe2_z+pe3_z)/2, dimNZ, torusZ)) <= distance )
     return 1;
   else
     return 0;
+#endif
 }
 
 void TopoManager::quicksort(int pe, int *pes, int *arr, int left, int right) {

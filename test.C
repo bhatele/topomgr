@@ -32,15 +32,25 @@ int main(int argc, char *argv[]) {
 #endif
 
     int x, y, z, t;
+    int a, b, c, d, e;
     printf("Testing TopoManager .... \n");
     printf("MPI Job Size: %d cores\n\n", numprocs);
     
     TopoManager tmgr = TopoManager(numprocs);
+#if CMK_BLUEGENEQ
+    printf("Torus Size [%d] [%d] [%d] [%d] [%d] [%d]\n\n", tmgr.getDimNA(), tmgr.getDimNB(), tmgr.getDimNC(), tmgr.getDimND(), tmgr.getDimNE(), tmgr.getDimNT());
+#else
     printf("Torus Size [%d] [%d] [%d] [%d]\n\n", tmgr.getDimNX(), tmgr.getDimNY(), tmgr.getDimNZ(), tmgr.getDimNT());
+#endif
 
     for(int i=0; i<numprocs; i++) {
+#if CMK_BLUEGENEQ
+      tmgr.rankToCoordinates(i, a, b, c, d, e, t);
+      printf("---- Processor %d ---> a %d b %d c %d d %d e %d t %d\n", i, a, b, c, d, e, t);
+#else
       tmgr.rankToCoordinates(i, x, y, z, t); 
       printf("---- Processor %d ---> x %d y %d z %d t %d\n", i, x, y, z, t);
+#endif
 #if CMK_BLUEGENEL
       unsigned int tmp_t, tmp_x, tmp_y, tmp_z;
       rts_coordinatesForRank(i, &tmp_x, &tmp_y, &tmp_z, &tmp_t);
@@ -56,7 +66,11 @@ int main(int argc, char *argv[]) {
 #endif
     }
   
+#if CMK_BLUEGENEQ
+    int size = tmgr.getDimNA() * tmgr.getDimNB() * tmgr.getDimNC() * tmgr.getDimND() * tmgr.getDimNE();
+#else
     int size = tmgr.getDimNX() * tmgr.getDimNY() * tmgr.getDimNZ();
+#endif
     printf("\nTorus Contiguity Metric %d : %d [%f] \n", size, numprocs/tmgr.getDimNT(), (float)(numprocs)/(tmgr.getDimNT()*size) );
   }
 
