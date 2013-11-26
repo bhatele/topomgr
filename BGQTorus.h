@@ -198,18 +198,13 @@ class BGQTorusManager {
       return pe;
     }
 
-    inline int getTotalPhyNodes(){
+    inline int getTotalPhyNodes() {
       return rn_NA * rn_NB * rn_NC * rn_ND * rn_NE;
     }
 
-    inline int getMyPhyNodeID(int pe){
-      int x,y,z,t;
-      rankToCoordinates(pe, x, y, z, t);
-      int a = x/rn_NB;
-      int b = ((a % 2)==0)?(x % rn_NB) : (rn_NB - (x % rn_NB) - 1);
-      int c = y/rn_ND;
-      int d = ((c % 2)==0)?(y % rn_ND) : (rn_ND - (y % rn_ND) - 1);
-      int e = z;
+    inline int getMyPhyNodeID(int pe) {
+      int a, b, c, d, e, t;
+      rankToCoordinates(pe, a, b, c, d, e, t);
       return a * rn_NB * rn_NC * rn_ND * rn_NE + b * rn_NC * rn_ND * rn_NE + c * rn_ND * rn_NE + d * rn_NE + e;
     }
 

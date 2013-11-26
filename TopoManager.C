@@ -90,6 +90,7 @@ TopoManager::TopoManager(int _numPes) : numPes(_numPes) {
 #endif
 }
 
+#if !CMK_BLUEGENEQ
 TopoManager::TopoManager(int NX, int NY, int NZ, int NT) : dimNX(NX), dimNY(NY), dimNZ(NZ), dimNT(NT) {
   procsPerNode = dimNT;
   torusX = true;
@@ -98,6 +99,7 @@ TopoManager::TopoManager(int NX, int NY, int NZ, int NT) : dimNX(NX), dimNY(NY),
   torusT = false;
   numPes = dimNX * dimNY * dimNZ * dimNT;
 }
+#endif
 
 int TopoManager::hasMultipleProcsPerNode() const {
   if(procsPerNode == 1)

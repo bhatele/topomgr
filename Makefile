@@ -3,9 +3,16 @@
 
 # ==============================================================================
 # Blue Gene/P
+#CC      = bgxlc
+#CXX     = bgxlC
+#COPTS   = -c -O3 -I/bgsys/drivers/ppcfloor/comm/include/
+#LOPTS   =
+
+# ==============================================================================
+# Blue Gene/Q
 CC      = bgxlc
 CXX     = bgxlC
-COPTS   = -c -O3 -I/bgsys/drivers/ppcfloor/comm/include/
+COPTS   = -c -O3 -I/bgsys/drivers/ppcfloor/ -I/bgsys/drivers/ppcfloor/spi/include/kernel/cnk/
 LOPTS   =
 
 # ==============================================================================

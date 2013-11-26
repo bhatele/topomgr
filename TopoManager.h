@@ -41,7 +41,9 @@
 class TopoManager {
   public:
     TopoManager(int _numPes);
+#if !CMK_BLUEGENEQ
     TopoManager(int NX, int NY, int NZ, int NT);
+#endif
     ~TopoManager() { }
 
 #if CMK_BLUEGENEQ
