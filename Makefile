@@ -11,9 +11,9 @@
 
 # ==============================================================================
 # Blue Gene/Q
-CC      = bgxlc
-CXX     = bgxlC
-MPICXX  = mpixlcxx
+CC      = powerpc64-bgq-linux-gcc
+CXX     = powerpc64-bgq-linux-g++
+MPICXX  = mpicxx
 COPTS   = -c -O3
 INCL    = -I/bgsys/drivers/ppcfloor/ -I/bgsys/drivers/ppcfloor/spi/include/kernel/cnk/
 LOPTS   =
